@@ -46,4 +46,12 @@ class PluginUtilTest {
         assertThat(PluginUtil.parseBaseUrl("http://foo.bar/asd/")).isEqualTo("http://foo.bar/asd");
         assertThat(PluginUtil.parseBaseUrl("http://foo.bar/asd/foo")).isEqualTo("http://foo.bar/asd/foo");
     }
+
+    @Test
+    void effectiveOidcTokenIdTest() {
+        assertThat(PluginUtil.effectiveOidcTokenId(" job-oidc ", "job-key", "global-oidc")).isEqualTo("job-oidc");
+        assertThat(PluginUtil.effectiveOidcTokenId(null, "job-key", "global-oidc")).isNull();
+        assertThat(PluginUtil.effectiveOidcTokenId(" ", null, " global-oidc ")).isEqualTo("global-oidc");
+        assertThat(PluginUtil.effectiveOidcTokenId(null, null, null)).isNull();
+    }
 }

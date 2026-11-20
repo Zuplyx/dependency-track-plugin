@@ -98,6 +98,27 @@ class PluginUtil {
     }
 
     /**
+     * resolves the credential-id of the OIDC token for workload identity
+     * federation. an api key in the job config takes precedence over the OIDC
+     * token from the global config.
+     *
+     * @param jobOidcTokenId credential-id of the OIDC token in the job config
+     * @param jobApiKeyId credential-id of the api key in the job config
+     * @param globalOidcTokenId credential-id of the OIDC token in the global
+     * config
+     * @return effective credential-id of the OIDC token or {@code null} if an
+     * api key shall be used
+     */
+    @Nullable
+    static String effectiveOidcTokenId(@Nullable final String jobOidcTokenId, @Nullable final String jobApiKeyId, @Nullable final String globalOidcTokenId) {
+        final String jobOidcToken = trimToNull(jobOidcTokenId);
+        if (jobOidcToken != null || trimToNull(jobApiKeyId) != null) {
+            return jobOidcToken;
+        }
+        return trimToNull(globalOidcTokenId);
+    }
+
+    /**
      * creates the set of required permissions depending on the given options.
      *
      * @param synchronous value for synchronous publishing as specified in the

@@ -330,7 +330,7 @@ public final class DependencyTrackPublisher extends Recorder implements SimpleBu
 
         final String bom = readArtifact(logger, workspace, effectiveArtifact);
         final String effectiveUrl = getEffectiveUrl();
-        final String effectiveOidcToken = getEffectiveOidcToken();
+        final String effectiveOidcToken = PluginUtil.effectiveOidcTokenId(dependencyTrackOidcToken, dependencyTrackApiKey, descriptor.getDependencyTrackOidcToken());
         final boolean useWorkloadIdentity = effectiveOidcToken != null;
         final String effectiveApiKey = useWorkloadIdentity ? "" : getEffectiveApiKey(run);
         final var effectiveProjectProperties = expandProjectProperties(env);
@@ -588,23 +588,6 @@ public final class DependencyTrackPublisher extends Recorder implements SimpleBu
         } else {
             return "";
         }
-    }
-
-    /**
-     * resolves the credential-id of the OIDC token for workload identity
-     * federation. an api key in the job config takes precedence over the OIDC
-     * token from the global config.
-     *
-     * @return effective credential-id of the OIDC token or {@code null} if an
-     * api key shall be used
-     */
-    @Nullable
-    private String getEffectiveOidcToken() {
-        final String jobOidcToken = PluginUtil.trimToNull(dependencyTrackOidcToken);
-        if (jobOidcToken != null || PluginUtil.trimToNull(dependencyTrackApiKey) != null) {
-            return jobOidcToken;
-        }
-        return PluginUtil.trimToNull(descriptor.getDependencyTrackOidcToken());
     }
 
     /**

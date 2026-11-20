@@ -479,10 +479,7 @@ public class DescriptorImpl extends BuildStepDescriptor<Publisher> implements Se
      */
     @NonNull
     private Authentication resolveAuthentication(final String apiKeyId, final String oidcTokenId, final String provider, final String serviceAccount, final Item item) {
-        final String instanceOidcTokenId = PluginUtil.trimToNull(oidcTokenId);
-        final String effectiveOidcTokenId = instanceOidcTokenId != null || PluginUtil.trimToNull(apiKeyId) != null
-                ? instanceOidcTokenId
-                : PluginUtil.trimToNull(getDependencyTrackOidcToken());
+        final String effectiveOidcTokenId = PluginUtil.effectiveOidcTokenId(oidcTokenId, apiKeyId, getDependencyTrackOidcToken());
         if (effectiveOidcTokenId != null) {
             return new Authentication(true, lookupApiKey(effectiveOidcTokenId, item),
                     Optional.ofNullable(PluginUtil.trimToNull(provider)).or(() -> Optional.ofNullable(getDependencyTrackWorkloadIdentityProvider())).orElse(""),
